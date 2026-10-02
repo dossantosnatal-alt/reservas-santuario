@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserva de Refeições 🍽️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8 text-gray-800">
+
+  <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden p-6 border border-gray-100">
+    <!-- Cabeçalho -->
+    <div class="text-center mb-6">
+      <span class="text-4xl">🍽️</span>
+      <h1 class="text-2xl font-bold text-gray-900 mt-2">Reserva de Refeições</h1>
+      <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mt-1">Santuário Tabor Fonte de Vida Nova - Poços de Caldas (MG)</p>
+      <p class="text-sm font-semibold text-blue-600 mt-2">Data do Evento: 18/10/2026</p>
+    </div>
+
+    <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-6">
+      <!-- Dados Pessoais -->
+      <div class="space-y-3">
+        <h2 class="font-bold text-lg text-gray-700 border-b pb-1">1. Seus Dados</h2>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nome Completo</label>
+          <input type="text" id="nome" required placeholder="Digite seu nome" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">WhatsApp / Telefone</label>
+          <input type="tel" id="whatsapp" required placeholder="(00) 00000-0000" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Cidade</label>
+          <input type="text" id="cidade" required placeholder="Sua cidade" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+      </div>
+
+      <!-- Seleção de Opções -->
+      <div class="space-y-4">
+        <h2 class="font-bold text-lg text-gray-700 border-b pb-1">2. Escolha as Refeições</h2>
+
+        <!-- Combo -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-gray-800">Combo (Café + Almoço)</h3>
+            <span class="text-sm font-semibold text-green-600">R$ 55,00</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="updateQty('combo', -1)" class="w-8 h-8 bg-gray-200 rounded-full text-lg font-bold flex items-center justify-center text-gray-700 active:bg-gray-300">-</button>
+            <span id="qty_combo" class="font-bold text-lg w-6 text-center">0</span>
+            <button type="button" onclick="updateQty('combo', 1)" class="w-8 h-8 bg-blue-600 rounded-full text-lg font-bold flex items-center justify-center text-white active:bg-blue-700">+</button>
+          </div>
+        </div>
+
+        <!-- Café Avulso -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-gray-800">Café (Avulso)</h3>
+            <span class="text-sm font-semibold text-green-600">R$ 20,00</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="updateQty('cafe', -1)" class="w-8 h-8 bg-gray-200 rounded-full text-lg font-bold flex items-center justify-center text-gray-700 active:bg-gray-300">-</button>
+            <span id="qty_cafe" class="font-bold text-lg w-6 text-center">0</span>
+            <button type="button" onclick="updateQty('cafe', 1)" class="w-8 h-8 bg-blue-600 rounded-full text-lg font-bold flex items-center justify-center text-white active:bg-blue-700">+</button>
+          </div>
+        </div>
+
+        <!-- Almoço Avulso -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-gray-800">Almoço (Avulso)</h3>
+            <span class="text-sm font-semibold text-green-600">R$ 40,00</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="updateQty('almoco', -1)" class="w-8 h-8 bg-gray-200 rounded-full text-lg font-bold flex items-center justify-center text-gray-700 active:bg-gray-300">-</button>
+            <span id="qty_almoco" class="font-bold text-lg w-6 text-center">0</span>
+            <button type="button" onclick="updateQty('almoco', 1)" class="w-8 h-8 bg-blue-600 rounded-full text-lg font-bold flex items-center justify-center text-white active:bg-blue-700">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumo do Valor -->
+      <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 flex justify-between items-center">
+        <span class="font-bold text-blue-900">Total da Reserva:</span>
+        <span id="total_price" class="text-2xl font-black text-blue-600">R$ 0,00</span>
+      </div>
+
+      <p id="error_msg" class="text-red-500 text-xs font-semibold text-center hidden"></p>
+
+      <button type="submit" id="submitBtn" disabled class="w-full bg-gray-400 text-white py-4 rounded-xl font-bold text-lg shadow-lg cursor-not-allowed transition-all">
+        Finalizar Reserva
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const N8N_WEBHOOK_URL = 'https://seu-n8n.com/webhook/reserva-refeicao';
+    const SEU_NUMERO_WHATSAPP = '5535999999999';
+
+    const PRECOS = {
+      combo: 55.00,
+      cafe: 20.00,
+      almoco: 40.00
+    };
+
+    let items = {
+      combo: 0,
+      cafe: 0,
+      almoco: 0
+    };
+
+    function updateQty(item, change) {
+      items[item] = Math.max(0, items[item] + change);
+      document.getElementById(`qty_${item}`).innerText = items[item];
+      calculateTotal();
+    }
+
+    function calculateTotal() {
+      const totalValue = (items.combo * PRECOS.combo) + 
+                         (items.cafe * PRECOS.cafe) + 
+                         (items.almoco * PRECOS.almoco);
+
+      document.getElementById('total_price').innerText = `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+
+      const totalItems = items.combo + items.cafe + items.almoco;
+      const btn = document.getElementById('submitBtn');
+      const errorMsg = document.getElementById('error_msg');
+
+      if (totalItems > 0) {
+        errorMsg.classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        btn.classList.add('bg-green-600', 'hover:bg-green-700', 'active:scale-95');
+      } else {
+        errorMsg.innerText = "Selecione pelo menos uma refeição para continuar.";
+        errorMsg.classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+        btn.classList.remove('bg-green-600', 'hover:bg-green-700', 'active:scale-95');
+      }
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      
+      const totalValue = (items.combo * PRECOS.combo) + 
+                         (items.cafe * PRECOS.cafe) + 
+                         (items.almoco * PRECOS.almoco);
+
+      const payload = {
+        nome: document.getElementById('nome').value,
+        whatsapp: document.getElementById('whatsapp').value.replace(/\D/g, ""),
+        cidade: document.getElementById('cidade').value,
+        data_evento: '18/10/2026',
+        reserva: {
+          combo: items.combo,
+          cafe: items.cafe,
+          almoco: items.almoco
+        },
+        valor_total: totalValue
+      };
+
+      document.getElementById('submitBtn').innerText = "Enviando reserva...";
+
+      try {
+        if (N8N_WEBHOOK_URL.includes('http')) {
+          await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+      } catch (err) {
+        console.log("Servidor Webhook offline/não configurado ainda.", err);
+      }
+
+      let resumoTexto = [];
+      if (items.combo > 0) resumoTexto.push(`${items.combo}x Combo`);
+      if (items.cafe > 0) resumoTexto.push(`${items.cafe}x Café`);
+      if (items.almoco > 0) resumoTexto.push(`${items.almoco}x Almoço`);
+
+      const msgTexto = `Olá, meu nome é ${payload.nome} (${payload.cidade}).\nAcabei de fazer uma reserva no Santuário Tabor Fonte de Vida Nova para o dia 18/10/2026 de: ${resumoTexto.join(', ')}.\nValor Total: R$ ${totalValue.toFixed(2).replace('.', ',')}.`;
+      
+      window.location.href = `https://wa.me/${SEU_NUMERO_WHATSAPP}?text=${encodeURIComponent(msgTexto)}`;
+    }
+  </script>
+</body>
+</html>
